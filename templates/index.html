@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}TaskMaster — Smart task scheduling{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Built with Flask + SQLite + EDF scheduling</div>
+    <h1 class="hero-title">Plan smarter.<br>Miss fewer deadlines.</h1>
+    <p class="hero-sub">TaskMaster sorts your tasks automatically using the Earliest Deadline First algorithm — the same scheduling logic used in real-time operating systems.</p>
+    <div class="hero-actions">
+      <a href="{{ url_for('register') }}" class="btn-primary">Get started free</a>
+      <a href="{{ url_for('login') }}" class="btn-ghost">Log in</a>
+    </div>
+  </div>
+  <div class="hero-card-demo">
+    <div class="demo-card">
+      <div class="demo-header">
+        <span class="demo-title">Today's tasks</span>
+        <span class="demo-badge">EDF sorted</span>
+      </div>
+      <div class="demo-task overdue">
+        <span class="dot dot-high"></span>
+        <span class="dtitle">Submit internship application</span>
+        <span class="dtag dtag-red">2 days overdue</span>
+      </div>
+      <div class="demo-task">
+        <span class="dot dot-high"></span>
+        <span class="dtitle">Finish DSA assignment</span>
+        <span class="dtag dtag-amber">Due today</span>
+      </div>
+      <div class="demo-task">
+        <span class="dot dot-med"></span>
+        <span class="dtitle">Read Flask documentation</span>
+        <span class="dtag">3 days left</span>
+      </div>
+      <div class="demo-task done-task">
+        <span class="dot dot-done"></span>
+        <span class="dtitle done-text">Set up GitHub repo</span>
+        <span class="dtag dtag-green">Done</span>
+      </div>
+      <div class="demo-progress">
+        <div class="demo-pbar"><div class="demo-pfill" style="width:25%"></div></div>
+        <span>25% complete</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">⚡</div>
+      <h3>EDF scheduling</h3>
+      <p>Tasks are auto-sorted by a priority-weighted deadline score — not just by date. Urgent + high priority rises to the top.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔒</div>
+      <h3>Secure accounts</h3>
+      <p>Passwords hashed with Werkzeug's PBKDF2. Session-based auth. Each user sees only their own tasks.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📡</div>
+      <h3>REST API</h3>
+      <p>GET /api/tasks returns your tasks as JSON sorted by urgency — ready for any frontend or mobile app to consume.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <h3>Live dashboard</h3>
+      <p>Track overdue tasks, due-today count, and overall completion percentage — updated instantly without a page reload.</p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

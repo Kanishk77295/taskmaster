@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{% if task %}Edit task{% else %}New task{% endif %} — TaskMaster{% endblock %}
+{% block content %}
+
+<div class="auth-wrap">
+  <div class="auth-card auth-card-wide">
+    <h2 class="auth-title">{% if task %}Edit task{% else %}New task{% endif %}</h2>
+
+    <form method="POST" class="auth-form">
+      <div class="form-group">
+        <label for="title">Task title *</label>
+        <input type="text" id="title" name="title"
+               value="{{ task.title if task else '' }}"
+               placeholder="e.g. Finish Flask assignment"
+               required maxlength="200"/>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description <span class="label-opt">(optional)</span></label>
+        <textarea id="description" name="description" rows="3"
+                  placeholder="Any extra details...">{{ task.description if task else '' }}</textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="priority">Priority</label>
+          <select id="priority" name="priority">
+            <option value="high"   {% if task and task.priority == 'high'   %}selected{% endif %}>High</option>
+            <option value="medium" {% if not task or task.priority == 'medium' %}selected{% endif %}>Medium</option>
+            <option value="low"    {% if task and task.priority == 'low'    %}selected{% endif %}>Low</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="deadline">Deadline <span class="label-opt">(optional)</span></label>
+          <input type="date" id="deadline" name="deadline"
+                 min="{{ today }}"
+                 value="{{ task.deadline.isoformat() if task and task.deadline else '' }}"/>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">
+          {% if task %}Save changes{% else %}Add task{% endif %}
+        </button>
+        <a href="{{ url_for('dashboard') }}" class="btn-ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — TaskMaster{% endblock %}
+{% block content %}
+
+<div class="dash-wrap">
+
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <span class="stat-num">{{ total }}</span>
+      <span class="stat-lbl">Total tasks</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ complete }}</span>
+      <span class="stat-lbl">Completed</span>
+    </div>
+    <div class="stat-card {% if overdue_count > 0 %}stat-danger{% endif %}">
+      <span class="stat-num">{{ overdue_count }}</span>
+      <span class="stat-lbl">Overdue</span>
+    </div>
+    <div class="stat-card {% if due_today_count > 0 %}stat-warn{% endif %}">
+      <span class="stat-num">{{ due_today_count }}</span>
+      <span class="stat-lbl">Due today</span>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-row">
+    <div class="progress-track">
+      <div class="progress-fill" id="main-progress" style="width: {{ pct }}%"></div>
+    </div>
+    <span class="progress-label" id="progress-label">{{ pct }}% complete</span>
+  </div>
+
+  <!-- Header + add button -->
+  <div class="section-header">
+    <h2>Pending <span class="count-badge">{{ pending | length }}</span></h2>
+    <a href="{{ url_for('new_task') }}" class="btn-primary">+ Add task</a>
+  </div>
+
+  {% if not pending %}
+    <div class="empty-state">
+      <p>No pending tasks — add one above!</p>
+    </div>
+  {% else %}
+    <div class="task-list" id="task-list">
+      {% for task in pending %}
+        <div class="task-row {% if task.is_overdue %}task-overdue{% endif %}" id="task-{{ task.id }}">
+          <div class="task-check">
+            <input type="checkbox"
+                   class="toggle-check"
+                   data-id="{{ task.id }}"
+                   {% if task.status == 'done' %}checked{% endif %}/>
+          </div>
+          <div class="task-body">
+            <div class="task-top">
+              <span class="task-title">{{ task.title }}</span>
+              <span class="priority-badge priority-{{ task.priority }}">{{ task.priority }}</span>
+            </div>
+            {% if task.description %}
+              <p class="task-desc">{{ task.description }}</p>
+            {% endif %}
+            <div class="task-meta">
+              {% if task.deadline %}
+                {% if task.is_overdue %}
+                  <span class="meta-tag meta-red">{{ (today - task.deadline).days }}d overdue</span>
+                {% elif task.days_left == 0 %}
+                  <span class="meta-tag meta-amber">Due today</span>
+                {% elif task.days_left <= 2 %}
+                  <span class="meta-tag meta-amber">{{ task.days_left }}d left</span>
+                {% else %}
+                  <span class="meta-tag">{{ task.days_left }}d left · {{ task.deadline.strftime('%d %b') }}</span>
+                {% endif %}
+              {% else %}
+                <span class="meta-tag meta-muted">No deadline</span>
+              {% endif %}
+              <span class="meta-tag meta-muted">urgency score: {{ task.urgency_score() }}</span>
+            </div>
+          </div>
+          <div class="task-actions">
+            <a href="{{ url_for('edit_task', task_id=task.id) }}" class="action-btn" title="Edit">✏️</a>
+            <form method="POST" action="{{ url_for('delete_task', task_id=task.id) }}" class="inline-form">
+              <button type="submit" class="action-btn action-del" title="Delete"
+                      onclick="return confirm('Delete this task?')">🗑</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Completed section -->
+  {% if done %}
+    <div class="section-header" style="margin-top: 2rem;">
+      <h2>Completed <span class="count-badge count-green">{{ done | length }}</span></h2>
+    </div>
+    <div class="task-list task-list-done">
+      {% for task in done %}
+        <div class="task-row task-done" id="task-{{ task.id }}">
+          <div class="task-check">
+            <input type="checkbox"
+                   class="toggle-check"
+                   data-id="{{ task.id }}"
+                   checked/>
+          </div>
+          <div class="task-body">
+            <span class="task-title task-title-done">{{ task.title }}</span>
+          </div>
+          <div class="task-actions">
+            <form method="POST" action="{{ url_for('delete_task', task_id=task.id) }}" class="inline-form">
+              <button type="submit" class="action-btn action-del" title="Delete"
+                      onclick="return confirm('Delete this task?')">🗑</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}
